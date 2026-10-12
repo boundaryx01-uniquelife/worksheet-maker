@@ -1,0 +1,50 @@
+<title>부산대 과학영재원 대비</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: 제목 + 가로 배너 목록. 밝은 민트 단일 테마(의도적) */
+:root{color-scheme:light;--ink:#14233f;--muted:#5b6b88;--blue:#2563eb;--mint:#12b886;--sun:#ffc83d;--font:'Noto Sans KR',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:#f3fbf8;color:var(--ink);font-family:var(--font);padding-inline:16px}
+.in{max-width:900px;margin:0 auto;padding-block:36px 56px;display:flex;flex-direction:column;gap:22px}
+.mark{align-self:flex-start;font-size:12px;font-weight:800;letter-spacing:.12em;background:var(--sun);color:#4a3500;padding:4px 12px;border-radius:99px}
+.back{align-self:flex-start;font-size:13px;font-weight:700;color:var(--blue);text-decoration:none}
+h1{margin:0;font-size:30px;font-weight:800;text-wrap:balance}
+.sub{margin:0;color:var(--muted);font-size:14px}
+.days{display:flex;flex-wrap:wrap;gap:10px}
+.day{display:flex;gap:8px;align-items:baseline;background:#fff;border:1px solid #cfeee2;border-radius:12px;padding:10px 14px;font-size:13px;color:var(--muted)}
+.day b{font-size:20px;color:var(--ink);font-variant-numeric:tabular-nums}
+.list{display:grid;gap:14px}
+.t{display:flex;align-items:center;gap:18px;background:var(--mint);color:#fff;border-radius:20px;padding:22px 26px;text-decoration:none;min-width:0;transition:transform .15s}
+a.t:hover{transform:translateX(4px)}
+a.t:focus-visible,.back:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.th{font-size:34px;font-weight:800;white-space:nowrap}
+.tx{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.name{font-size:20px;font-weight:800}
+.meta{font-size:13px;color:#e6fff6}
+a.t::after{content:"→";font-size:26px;font-weight:800}
+.soon{background:none;border:2px dashed #b8e6d6;color:#6aa893}
+.soon .meta{color:#6aa893}
+@media (max-width:520px){.th{font-size:24px}.t{padding:18px}}
+@media (prefers-reduced-motion:reduce){.t{transition:none}}
+</style>
+<div class="in">
+  <a class="back" href="../">← 모의고사 메이커 허브</a>
+  <h1>부산대 과학영재원 대비</h1>
+  <p class="sub">중등수학심화 · 앱을 하나씩 채워 갑니다.</p>
+  <div class="days" id="days"></div>
+  <div class="list" id="list"></div>
+</div>
+<script>
+var D=[['1차 전형','2026-10-31'],['2차 전형','2026-11-21']];
+var I=[
+ ['문제','영재원 모의고사 메이커','30문항 은행에서 자동 설계, 시험지·해설 출력 파일','./maker/'],
+ ['문제','모의고사 1회','창의적문제해결력 5문항 한 회분','./mock1/'],
+ ['문제','모의 연습 (초기판)','처음 만든 연습용 모의고사','./practice/'],
+ ['자소서','자소서 연습','준비 중'],['면접','면접·설명 연습','준비 중'],['기록','학습 기록·오답','준비 중']];
+function dd(s){var n=new Date(),a=new Date(n.getFullYear(),n.getMonth(),n.getDate());return Math.round((new Date(s+'T00:00:00')-a)/864e5)}
+document.getElementById('days').innerHTML=D.map(function(d){var n=dd(d[1]);return '<div class="day">'+d[0]+' <b>'+(n>0?'D-'+n:n===0?'D-DAY':'종료')+'</b> '+d[1].slice(5).replace('-','/')+'</div>'}).join('');
+document.getElementById('list').innerHTML=I.map(function(x){
+  var inner='<div class="th">'+x[0]+'</div><div class="tx"><span class="name">'+x[1]+'</span><span class="meta">'+x[2]+'</span></div>';
+  return x[3]?'<a class="t" href="'+x[3]+'">'+inner+'</a>':'<div class="t soon">'+inner+'</div>';
+}).join('');
+</script>

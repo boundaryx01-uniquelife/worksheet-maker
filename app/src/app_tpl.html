@@ -160,11 +160,11 @@ textarea { width: 100%; min-height: 110px; font-family: ui-monospace, Menlo, Con
         <button id="m-exam" type="button" aria-pressed="true">시험지</button>
         <button id="m-sol" type="button" aria-pressed="false">해설·채점</button>
       </div>
-      <button class="btn small" id="p-exam" type="button">⬇ 문제지 출력용 파일</button>
-      <button class="btn small ghost" id="p-sol" type="button">⬇ 해설 포함 출력용 파일</button>
+      <button class="btn small" id="p-exam" type="button">🖨 문제지 출력 / PDF</button>
+      <button class="btn small ghost" id="p-sol" type="button">🖨 해설 포함 출력 / PDF</button>
       <label class="fld" style="flex-direction:row;align-items:center;gap:6px">시험 시간(분)<input type="number" id="s-min" min="10" max="300" step="5" style="width:70px"></label>
       <div class="grow" id="s-info"></div>
-      <p class="phint" id="phint">이 화면에서는 인쇄창이 열리지 않습니다. 버튼으로 HTML 파일을 받아 크롬에서 열고 Ctrl+P → "PDF로 저장"(A4, 배율 100%)을 쓰세요.</p>
+      <p class="phint" id="phint">출력 창에서 대상을 "PDF로 저장"으로 고르면 PDF가 됩니다. 용지 A4, 배율 100%. (Claude 안에서 열었다면 버튼으로 받은 HTML 파일을 크롬에서 여세요.)</p>
     </div>
     <div id="why" class="panel" hidden></div>
     <div id="sheet" data-mode="exam"></div>
@@ -305,6 +305,7 @@ function buildPrintHtml(m) {
     '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=STIX+Two+Text:ital,wght@0,500;1,500&display=swap"><style>' + css + '</style></head><body data-mode="' + m + '"><div class="wrap">' + bar + '<div id="sheet" data-mode="' + m + '">' + $('sheet').innerHTML + '</div></div></body></html>';
 }
 function printMode(m) {
+  if (!(window.claude && window.claude.use)) { setMode(m); setTimeout(function () { window.print(); }, 120); return; }
   var html = buildPrintHtml(m);
   var name = (m === 'sol' ? '해설포함' : '문제지') + '_' + new Date().toISOString().slice(0, 10) + '.html';
   claude.use('downloads').then(function (d) {
