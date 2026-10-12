@@ -1,0 +1,497 @@
+<title>영재원 모의고사 메이커</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=STIX+Two+Text:ital,wght@0,500;1,500&display=swap">
+<style>
+/*CSS*/
+/* ---------- app ui ---------- */
+.apphead { margin: 4px 0 18px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; justify-content: space-between; }
+.apphead h1 { font-size: 26px; }
+.apphead p { margin: 0; color: var(--muted); font-size: 13px; flex-basis: 100%; }
+.stat { font-size: 12px; font-weight: 700; color: #4a3500; background: var(--sun); padding: 3px 10px; border-radius: 99px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.tab { border: 1px solid var(--line); background: var(--panel); padding: 8px 16px; font-weight: 600; font-size: 14px; color: var(--muted); cursor: pointer; border-radius: 99px; }
+.tab:hover { color: var(--fg); }
+.tab[aria-selected="true"] { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 2px rgba(15,27,45,.04); }
+.panel h2 { font-size: 17px; margin-bottom: 8px; color: var(--fg); font-family: var(--serif); }
+.row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-end; margin: 10px 0; }
+.fld { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); min-width: 0; }
+.fld select, .fld input[type=text], .fld input[type=number], textarea { font: inherit; font-size: 14px; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; min-width: 0; }
+textarea { width: 100%; min-height: 110px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+.chk { display: flex; gap: 6px; align-items: center; font-size: 14px; color: var(--fg); }
+.btn { border: 1px solid var(--accent); background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 14px; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn.small { padding: 4px 10px; font-size: 12px; }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.note { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+.warn { background: var(--warn-bg); color: var(--warn); border-radius: 8px; padding: 8px 12px; font-size: 13px; margin: 8px 0; }
+.slot { display: grid; grid-template-columns: 28px 1fr 1fr 2fr auto; gap: 8px; align-items: center; margin: 6px 0; }
+.slot .no { font-weight: 800; color: var(--accent); }
+.slot select { width: 100%; font: inherit; font-size: 13px; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 5px 6px; min-width: 0; }
+.cards { display: grid; gap: 10px; }
+.card { border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; background: var(--panel); }
+.card h3 { font-size: 15px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.lv { font-size: 12px; font-weight: 700; color: var(--warn); background: var(--warn-bg); padding: 2px 8px; border-radius: 4px; margin-left: 6px; }
+.lv[data-l="중하"] { color: #0b6e8a; background: #dff4fb; }
+.lv[data-l="중"] { color: var(--ok); background: var(--ok-bg); }
+.lv[data-l="상"] { color: var(--bad); background: var(--bad-bg); }
+.ai { font-size: 11px; font-weight: 700; color: var(--bad); background: var(--bad-bg); padding: 2px 7px; border-radius: 4px; }
+.ai.ok { color: var(--ok); background: var(--ok-bg); }
+.card .acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.card details { margin-top: 8px; }
+.card details summary { cursor: pointer; font-size: 13px; color: var(--accent); }
+.bars { display: grid; gap: 8px; margin-top: 8px; }
+.brow { display: grid; grid-template-columns: 110px 1fr 56px; gap: 8px; align-items: center; font-size: 13px; }
+.bar2 { height: 12px; background: var(--accent-soft); border-radius: 6px; overflow: hidden; }
+.bar2 > i { display: block; height: 100%; background: var(--accent); font-style: normal; border-radius: 6px; }
+.why { font-size: 13px; }
+.why li { margin: 3px 0; }
+.outbar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin: 14px 0; }
+.outbar .grow { flex: 1; font-size: 13px; color: var(--muted); min-width: 160px; }
+.seg2 { display: inline-flex; border: 1px solid var(--accent); border-radius: 8px; overflow: hidden; }
+.seg2 button { border: 0; background: transparent; color: var(--accent); font-weight: 700; font-size: 14px; padding: 7px 12px; cursor: pointer; }
+.seg2 button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.empty { text-align: center; color: var(--muted); padding: 30px 10px; font-size: 14px; }
+.savebar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+@media (max-width: 560px) { .slot { grid-template-columns: 24px 1fr 1fr; } .slot .pick { grid-column: 2 / 4; } .slot .rm { grid-column: 2 / 4; } .brow { grid-template-columns: 80px 1fr 48px; } }
+@media print { .appui, .outbar, #why { display: none !important; } .sheetwrap { margin: 0; } }
+</style>
+
+<div class="wrap">
+  <div class="appui">
+    <div class="apphead">
+      <h1>영재원 모의고사 메이커</h1>
+      <span class="stat" id="stat"></span>
+      <p>부산대 과학영재교육원 중등수학심화 대비 · 지문형 연쇄 서술 문제를 시험지로 만들어 출력하고, 해설·채점·약점 기록까지 합니다.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="메뉴">
+      <button class="tab" role="tab" id="t-auto" aria-selected="true" data-tab="auto">자동 설계</button>
+      <button class="tab" role="tab" id="t-custom" aria-selected="false" data-tab="custom">커스텀</button>
+      <button class="tab" role="tab" id="t-bank" aria-selected="false" data-tab="bank">문제 은행</button>
+      <button class="tab" role="tab" id="t-rec" aria-selected="false" data-tab="rec">학습 기록</button>
+    </div>
+
+    <!-- 자동 설계 -->
+    <section class="panel" id="pn-auto" role="tabpanel" aria-labelledby="t-auto">
+      <h2>자동 설계</h2>
+      <p class="note" style="margin-top:0">실전 난이도 구성에 맞춰 문항을 고릅니다. 영역은 겹치지 않게 분산하고, 학습 기록에서 정답률이 낮은 영역을 우선합니다.</p>
+      <div class="row">
+        <label class="fld">문항 수<select id="a-n"></select></label>
+        <label class="fld">난이도 구성<select id="a-prof">
+          <option value="std">실전형 (중 중 중 중상 상)</option>
+          <option value="basic">기초 다지기 (중하 위주)</option>
+          <option value="warm">워밍업 (중하 중하 중 중 중상)</option>
+          <option value="hard">고난도 (중상·상 위주)</option>
+        </select></label>
+        <label class="fld">영역<select id="a-topic"></select></label>
+      </div>
+      <div class="row">
+        <label class="chk"><input type="checkbox" id="a-weak" checked> 약점 영역 우선</label>
+        <label class="chk"><input type="checkbox" id="a-unseen" checked> 이미 잘 푼 문제는 제외</label>
+        <label class="chk"><input type="checkbox" id="a-spread" checked> 영역 겹침 최소화</label>
+      </div>
+      <div class="row">
+        <label class="fld">시드(같은 시드는 같은 시험지)<input type="text" id="a-seed" size="14"></label>
+        <button class="btn" id="a-go" type="button">시험지 만들기</button>
+        <button class="btn ghost" id="a-reroll" type="button">다른 조합으로 다시</button>
+      </div>
+    </section>
+
+    <!-- 커스텀 -->
+    <section class="panel" id="pn-custom" role="tabpanel" aria-labelledby="t-custom" hidden>
+      <h2>커스텀 문제지</h2>
+      <p class="note" style="margin-top:0">문항마다 영역·난이도를 정하거나 문제를 직접 지정합니다. 지정하지 않으면 조건에 맞는 문제를 무작위로 뽑습니다.</p>
+      <div id="slots"></div>
+      <div class="row">
+        <button class="btn ghost small" id="c-add" type="button">+ 문항 추가</button>
+        <label class="fld">시드<input type="text" id="c-seed" size="12"></label>
+        <button class="btn" id="c-go" type="button">시험지 만들기</button>
+      </div>
+    </section>
+
+    <!-- 문제 은행 -->
+    <section class="panel" id="pn-bank" role="tabpanel" aria-labelledby="t-bank" hidden>
+      <h2>문제 은행</h2>
+      <div class="row">
+        <label class="fld">영역<select id="b-topic"></select></label>
+        <label class="fld">난이도<select id="b-level"><option value="all">전체</option><option>중하</option><option>중</option><option>중상</option><option>상</option></select></label>
+        <span class="note" id="b-count"></span>
+      </div>
+      <div class="cards" id="b-list"></div>
+      <div class="panel" id="ai-panel" hidden style="margin-top:14px">
+        <h2>AI로 변형 문제 만들기</h2>
+        <p class="note" style="margin-top:0">고른 문제를 바탕으로 Claude가 새 문제를 만듭니다. 만들면서 정답을 코드로 계산해 확인하게 하지만, 사람이 한 번 더 풀어 보고 쓰세요. 문제는 은행에 추가해야 시험지에 들어갑니다.</p>
+        <div class="row">
+          <label class="fld">바탕 문제<select id="ai-base"></select></label>
+          <label class="fld">방식<select id="ai-kind"><option value="vary">숫자·조건만 바꾼 변형</option><option value="new">같은 영역의 새 문제</option></select></label>
+          <label class="fld">난이도<select id="ai-lv"><option>중하</option><option>중</option><option selected>중상</option><option>상</option></select></label>
+          <button class="btn" id="ai-go" type="button">만들기</button>
+        </div>
+        <div class="note" id="ai-msg"></div>
+        <div class="cards" id="ai-out"></div>
+      </div>
+      <details style="margin-top:14px">
+        <summary>문제 추가·내보내기 (JSON)</summary>
+        <p class="note">새 문제를 JSON으로 붙여 넣으면 은행에 추가되고, 이 브라우저에 저장됩니다. 필수 항목: id, title, topic, tag, level(중하·중·중상·상), body, sol, rubric([{t,p}]), ah(서술칸 mm).</p>
+        <textarea id="b-json" aria-label="문제 JSON"></textarea>
+        <div class="row">
+          <button class="btn small" id="b-import" type="button">가져오기</button>
+          <button class="btn ghost small" id="b-export" type="button">내가 추가한 문제 내보내기</button>
+          <button class="btn ghost small" id="b-clear" type="button">추가한 문제 모두 삭제</button>
+        </div>
+        <div class="note" id="b-msg"></div>
+      </details>
+    </section>
+
+    <!-- 학습 기록 -->
+    <section class="panel" id="pn-rec" role="tabpanel" aria-labelledby="t-rec" hidden>
+      <h2>학습 기록</h2>
+      <p class="note" style="margin-top:0">해설·채점 모드에서 [기록 저장]을 누르면 쌓입니다. 이 기록이 자동 설계의 약점 우선에 쓰입니다. (이 브라우저에만 저장)</p>
+      <div class="bars" id="r-bars"></div>
+      <div id="r-list" style="margin-top:12px"></div>
+      <div class="row"><button class="btn ghost small" id="r-reset" type="button">기록 모두 지우기</button></div>
+    </section>
+  </div>
+
+  <div class="sheetwrap" id="sheetwrap" hidden>
+    <div class="outbar">
+      <div class="seg2" role="group" aria-label="보기 모드">
+        <button id="m-exam" type="button" aria-pressed="true">시험지</button>
+        <button id="m-sol" type="button" aria-pressed="false">해설·채점</button>
+      </div>
+      <button class="btn small" id="p-exam" type="button">⬇ 문제지 출력용 파일</button>
+      <button class="btn small ghost" id="p-sol" type="button">⬇ 해설 포함 출력용 파일</button>
+      <label class="fld" style="flex-direction:row;align-items:center;gap:6px">시험 시간(분)<input type="number" id="s-min" min="10" max="300" step="5" style="width:70px"></label>
+      <div class="grow" id="s-info"></div>
+      <p class="phint" id="phint">이 화면에서는 인쇄창이 열리지 않습니다. 버튼으로 HTML 파일을 받아 크롬에서 열고 Ctrl+P → "PDF로 저장"(A4, 배율 100%)을 쓰세요.</p>
+    </div>
+    <div id="why" class="panel" hidden></div>
+    <div id="sheet" data-mode="exam"></div>
+  </div>
+</div>
+
+<script>
+var BUILTIN = /*BANK*/;
+var TOPIC_LABEL = { number: '정수론·논증', combi: '조합·경로', geo: '기하', inv: '불변량·구성', seq: '규칙성·점화식' };
+var LV = { '중하': 1, '중': 2, '중상': 3, '상': 4 };
+var PAGE_PX = 954, HEAD_PX = 238;
+function ahFor(p, first) {
+  var v = p.base ? (PAGE_PX - p.base - (first ? HEAD_PX : 0)) / 3.7795 : (first ? p.ah - 63 : p.ah);
+  return Math.round(Math.max(30, Math.min(190, v)));
+}
+var $ = function (id) { return document.getElementById(id); };
+var mem = {};
+function lsGet(k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return mem[k] !== undefined ? mem[k] : d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { mem[k] = v; } }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+/* ---- seeded rng ---- */
+function hashSeed(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
+function rngFrom(s) { var a = hashSeed(String(s)); return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function newSeed() { return Math.random().toString(36).slice(2, 8); }
+
+/* ---- bank ---- */
+function cleanHTML(h) {
+  var d = new DOMParser().parseFromString('<div>' + h + '</div>', 'text/html');
+  d.querySelectorAll('script,iframe,object,embed,link,style').forEach(function (n) { n.remove(); });
+  d.querySelectorAll('*').forEach(function (n) { [].slice.call(n.attributes).forEach(function (a) { if (/^on/i.test(a.name) || /^javascript:/i.test(a.value)) n.removeAttribute(a.name); }); });
+  return d.body.firstChild.innerHTML;
+}
+function userBank() { return lsGet('gm.userBank', []); }
+function allBank() { return BUILTIN.concat(userBank()); }
+function byId(id) { var b = allBank(); for (var i = 0; i < b.length; i++) if (b[i].id === id) return b[i]; return null; }
+function aiBadge(p) { return p.ai ? (p.verified ? '<span class="ai ok">AI 생성 · 코드 검증</span>' : '<span class="ai">AI 생성 · 직접 확인 필요</span>') : ''; }
+function topicLabel(t) { return TOPIC_LABEL[t] || t; }
+function topics() { var s = {}; allBank().forEach(function (p) { s[p.topic] = 1; }); return Object.keys(s); }
+
+/* ---- records ---- */
+function recs() { return lsGet('gm.rec', {}); }
+function topicAcc() {
+  var r = recs(), s = {}, c = {};
+  Object.keys(r).forEach(function (id) { var p = byId(id); if (!p) return; s[p.topic] = (s[p.topic] || 0) + r[id].r; c[p.topic] = (c[p.topic] || 0) + 1; });
+  var o = {}; Object.keys(s).forEach(function (t) { o[t] = s[t] / c[t]; }); return o;
+}
+
+/* ---- selection ---- */
+function levelPlan(n, prof) {
+  var std = { 1: [3], 2: [2, 4], 3: [2, 3, 4], 4: [2, 2, 3, 4], 5: [2, 2, 2, 3, 4] };
+  if (prof === 'std' && std[n]) return std[n].slice();
+  var P = { basic: [[0.6, 1], [1.01, 2]], warm: [[0.4, 1], [0.8, 2], [1.01, 3]], std: [[0.6, 2], [0.8, 3], [1.01, 4]], hard: [[0.2, 2], [0.6, 3], [1.01, 4]] }[prof], out = [];
+  for (var i = 0; i < n; i++) { var q = (i + 0.5) / n; for (var k = 0; k < P.length; k++) { if (q < P[k][0]) { out.push(P[k][1]); break; } } }
+  return out;
+}
+function autoPick(opt) {
+  var rng = rngFrom(opt.seed), acc = topicAcc(), r = recs();
+  var pool = allBank().filter(function (p) { return opt.topic === 'all' || p.topic === opt.topic; });
+  var plan = levelPlan(Math.min(opt.n, Math.max(pool.length, 1)), opt.prof);
+  var order = plan.map(function (lv, i) { return i; }).sort(function (a, b) { return plan[b] - plan[a]; });
+  var chosen = new Array(plan.length), used = {}, usedTopic = {}, why = [], warn = [];
+  order.forEach(function (si) {
+    var lv = plan[si], best = null, bestS = -1e9, bestWhy = '';
+    pool.forEach(function (p) {
+      if (used[p.id]) return;
+      var s = 0, w = [], d = Math.abs(LV[p.level] - lv);
+      s += d === 0 ? 3 : (d === 1 ? 1.2 : 0);
+      if (d === 0) w.push('목표 난이도 ' + p.level); else w.push('목표(' + lvName(lv) + ')와 가까운 ' + p.level);
+      if (opt.weak && acc[p.topic] !== undefined) { var wk = (1 - acc[p.topic]) * 2.5; s += wk; if (acc[p.topic] < 0.6) w.push('약점 영역(' + topicLabel(p.topic) + ' ' + Math.round(acc[p.topic] * 100) + '%)'); }
+      if (opt.weak && acc[p.topic] === undefined) { s += 0.8; w.push('아직 안 푼 영역'); }
+      if (r[p.id]) { if (opt.unseen && r[p.id].r >= 0.8) { s -= 4; } else if (r[p.id].r < 0.6) { s += 1; w.push('재도전'); } }
+      if (opt.spread && usedTopic[p.topic]) s -= 2.5;
+      s += rng() * 0.6;
+      if (s > bestS) { bestS = s; best = p; bestWhy = w.join(' · '); }
+    });
+    if (best) { chosen[si] = best; used[best.id] = 1; usedTopic[best.topic] = 1; why[si] = bestWhy; }
+  });
+  var items = [];
+  chosen.forEach(function (p, i) { if (p) items.push({ p: p, why: why[i], lv: plan[i] }); });
+  items.sort(function (a, b) { return LV[a.p.level] - LV[b.p.level] || a.p.id.localeCompare(b.p.id); });
+  if (items.length < opt.n) warn.push('은행에 조건에 맞는 문제가 ' + items.length + '개뿐이라 ' + opt.n + '문항을 채우지 못했습니다. 문제 은행에 문제를 추가하세요.');
+  if (pool.length && pool.length <= opt.n) warn.push('은행의 문제 수가 적어 같은 조합이 반복됩니다. 시드를 바꿔도 구성이 비슷합니다.');
+  return { items: items, warn: warn };
+}
+function lvName(v) { return ['', '중하', '중', '중상', '상'][v]; }
+
+/* ---- render sheet ---- */
+var cur = { items: [], title: '', seed: '', kind: '' };
+function renderSheet(items, title, seed, why, warn, kind) {
+  cur = { items: items.map(function (x) { return x.p || x; }), title: title, seed: seed, kind: kind };
+  var n = cur.items.length, total = cur.items.reduce(function (s, p) { return s + p.pts; }, 0);
+  var min = lsGet('gm.min', 0) || n * 20;
+  $('s-min').value = (min % 5 === 0 && lsGet('gm.minOn', false)) ? min : n * 20;
+  var h = '<header class="head"><div class="kicker">부산대학교 과학영재교육원 중등수학심화 대비 · 연쇄형 서술 모의고사</div><h1>' + esc(title) + '</h1>' +
+    '<div class="meta" id="sh-meta"></div>' +
+    '<ol class="rules"><li>각 대문항은 지문을 읽고 (1) → (2) → (3) 순서로 이어집니다. 앞 소문항의 결과가 뒤 소문항의 힌트입니다.</li><li>답만 쓰면 점수가 거의 없습니다. 왜 그런지 문장으로 쓰세요.</li><li>“가능하다 / 불가능하다 / 항상 성립한다”라고 쓸 때는 모든 경우를 다루는 근거를 쓰세요.</li></ol>' +
+    '<div class="idrow"><div>수험번호</div><div>성명</div></div></header>';
+  h += '<section class="score sol-only" aria-live="polite"><h2>자기채점 결과</h2><table><tr><th>대문항</th><th>영역</th><th>난이도</th><th>득점</th><th>배점</th></tr>';
+  cur.items.forEach(function (p, i) { h += '<tr><td>문제 ' + (i + 1) + '</td><td>' + esc(p.tag) + '</td><td>' + p.level + '</td><td id="sc' + i + '">0</td><td>' + p.pts + '</td></tr>'; });
+  h += '<tr class="total"><td colspan="3">합계</td><td id="sctot">0</td><td>' + total + '</td></tr></table>' +
+    '<div class="savebar"><button class="btn small" id="sv" type="button">기록 저장</button><span class="note" id="svmsg" style="margin:0">채점 기준에서 서술한 항목만 체크한 뒤 저장하면 약점 분석에 반영됩니다.</span></div></section>';
+  cur.items.forEach(function (p, i) {
+    var ah = ahFor(p, i === 0);
+    h += '<section class="prob" data-i="' + i + '"><div class="prob-head"><h2>문제 ' + (i + 1) + '. ' + esc(p.title) + '</h2><div><span class="tag">' + esc(p.tag) + '</span><span class="lv sol-only" data-l="' + p.level + '">' + p.level + '</span><span class="pts">' + p.pts + '점</span></div></div>' +
+      cleanHTML(p.body) + '<div class="exam-only"><div class="ans" style="--ah:' + ah + 'mm"></div></div>' +
+      '<div class="sol sol-only">' + cleanHTML(p.sol) + '<div class="rubric" data-i="' + i + '"><div class="rt">채점 기준 (' + p.pts + '점)</div>' +
+      p.rubric.map(function (it) { return '<label><input type="checkbox" data-pts="' + it.p + '"> ' + it.t + ' <span class="pt">' + it.p + '</span></label>'; }).join('') + '</div></div></section>';
+  });
+  h += '<footer class="foot">모든 정답과 풀이는 컴퓨터 계산으로 확인했습니다. 시험 시간·문항 수는 올해 공지에 맞춰 조정하세요.</footer>';
+  $('sheet').innerHTML = h;
+  $('sheetwrap').hidden = false;
+  updMeta();
+  $('s-info').textContent = (kind === 'auto' ? '자동 설계' : '커스텀') + ' · 시드 ' + seed;
+  var w = $('why');
+  if ((why && why.length) || (warn && warn.length)) {
+    w.hidden = false;
+    w.innerHTML = '<h2>설계 근거</h2>' + (warn || []).map(function (x) { return '<div class="warn">' + esc(x) + '</div>'; }).join('') +
+      '<ol class="why">' + (why || []).map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>';
+  } else w.hidden = true;
+  setMode('exam');
+  $('sheetwrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function updMeta() {
+  var n = cur.items.length, total = cur.items.reduce(function (s, p) { return s + p.pts; }, 0);
+  var m = $('s-min').value;
+  if ($('sh-meta')) $('sh-meta').textContent = '대문항 ' + n + '개 · 총 ' + total + '점 · 권장 시간 ' + m + '분 (실제 시험 시간은 공지에 맞춰 조정)';
+}
+function setMode(m) {
+  $('sheet').dataset.mode = m; document.body.dataset.mode = m;
+  $('m-exam').setAttribute('aria-pressed', m === 'exam'); $('m-sol').setAttribute('aria-pressed', m === 'sol');
+}
+function buildPrintHtml(m) {
+  setMode(m);
+  var css = Array.prototype.map.call(document.querySelectorAll('style'), function (s) { return s.textContent; }).join('\n');
+  var bar = '<div class="outbar" style="padding:12px;text-align:center;font:600 14px sans-serif"><button onclick="window.print()" style="font:inherit;padding:10px 20px;border-radius:99px;border:0;background:#2563eb;color:#fff;cursor:pointer">🖨 인쇄 / PDF로 저장 (A4, 배율 100%)</button></div>';
+  return '<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + ($('sh-title') ? $('sh-title').textContent : '모의고사') + '</title>' +
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&family=STIX+Two+Text:ital,wght@0,500;1,500&display=swap"><style>' + css + '</style></head><body data-mode="' + m + '"><div class="wrap">' + bar + '<div id="sheet" data-mode="' + m + '">' + $('sheet').innerHTML + '</div></div></body></html>';
+}
+function printMode(m) {
+  var html = buildPrintHtml(m);
+  var name = (m === 'sol' ? '해설포함' : '문제지') + '_' + new Date().toISOString().slice(0, 10) + '.html';
+  claude.use('downloads').then(function (d) {
+    if (!d) { $('phint').textContent = '이 화면에서는 파일 저장이 막혀 있습니다. 앱 밖(브라우저 새 탭)에서 열어 사용하세요.'; return; }
+    return d.save({ filename: name, data: html }).then(function () {
+      $('phint').textContent = '저장 완료 → 받은 HTML 파일을 크롬에서 열고 [인쇄/PDF] 버튼(또는 Ctrl+P) → 대상 "PDF로 저장", A4, 배율 100%.';
+    }, function (e) { if (e && e.code !== 'declined') $('phint').textContent = '저장 실패: ' + (e.message || e.code); });
+  });
+}
+function recalc() {
+  var tot = 0;
+  cur.items.forEach(function (p, i) {
+    var s = 0; document.querySelectorAll('.rubric[data-i="' + i + '"] input:checked').forEach(function (c) { s += Number(c.dataset.pts); });
+    var el = $('sc' + i); if (el) el.textContent = s; tot += s;
+  });
+  if ($('sctot')) $('sctot').textContent = tot;
+}
+function saveRec() {
+  var r = recs(), now = Date.now();
+  cur.items.forEach(function (p, i) {
+    var s = 0; document.querySelectorAll('.rubric[data-i="' + i + '"] input:checked').forEach(function (c) { s += Number(c.dataset.pts); });
+    var old = r[p.id] || { n: 0 };
+    r[p.id] = { r: s / p.pts, n: old.n + 1, t: now };
+  });
+  lsSet('gm.rec', r); $('svmsg').textContent = '저장했습니다. 학습 기록 탭에서 영역별 정답률을 볼 수 있습니다.'; renderRec(); renderBank();
+}
+
+/* ---- tabs ---- */
+function showTab(t) {
+  ['auto', 'custom', 'bank', 'rec'].forEach(function (k) { $('pn-' + k).hidden = k !== t; $('t-' + k).setAttribute('aria-selected', k === t); });
+  if (t === 'rec') renderRec(); if (t === 'bank') renderBank();
+}
+document.querySelectorAll('.tab').forEach(function (b) { b.addEventListener('click', function () { showTab(b.dataset.tab); }); });
+
+/* ---- auto ---- */
+function fillAutoUI() {
+  var cnt = allBank().length, sel = $('a-n'); sel.innerHTML = '';
+  for (var i = 1; i <= 10; i++) { var o = new Option(i + '문항', i); sel.add(o); }
+  sel.value = Math.min(5, Math.max(cnt, 1)) || 5; if (cnt >= 5) sel.value = 5;
+  var t = $('a-topic'); t.innerHTML = ''; t.add(new Option('전체 (분산)', 'all')); topics().forEach(function (k) { t.add(new Option(topicLabel(k), k)); });
+}
+function runAuto(reroll) {
+  if (reroll || !$('a-seed').value.trim()) $('a-seed').value = newSeed();
+  var opt = { n: +$('a-n').value, prof: $('a-prof').value, topic: $('a-topic').value, weak: $('a-weak').checked, unseen: $('a-unseen').checked, spread: $('a-spread').checked, seed: $('a-seed').value.trim() };
+  var r = autoPick(opt);
+  if (!r.items.length) { $('sheetwrap').hidden = false; $('sheet').innerHTML = '<div class="empty">조건에 맞는 문제가 없습니다.</div>'; return; }
+  var why = r.items.map(function (x, i) { return '문제 ' + (i + 1) + ' · ' + x.p.title + ' (' + topicLabel(x.p.topic) + ', ' + x.p.level + ') — ' + x.why; });
+  renderSheet(r.items, '모의고사 (자동 설계)', opt.seed, why, r.warn, 'auto');
+}
+$('a-go').addEventListener('click', function () { runAuto(false); });
+$('a-reroll').addEventListener('click', function () { runAuto(true); });
+
+/* ---- custom ---- */
+var slots = [{ t: 'all', l: 'all', p: 'auto' }, { t: 'all', l: 'all', p: 'auto' }, { t: 'all', l: 'all', p: 'auto' }];
+function renderSlots() {
+  var box = $('slots'); box.innerHTML = '';
+  slots.forEach(function (s, i) {
+    var row = document.createElement('div'); row.className = 'slot';
+    var tOpts = '<option value="all">영역 전체</option>' + topics().map(function (k) { return '<option value="' + k + '"' + (s.t === k ? ' selected' : '') + '>' + esc(topicLabel(k)) + '</option>'; }).join('');
+    var lOpts = ['all', '중하', '중', '중상', '상'].map(function (k) { return '<option value="' + k + '"' + (s.l === k ? ' selected' : '') + '>' + (k === 'all' ? '난이도 전체' : k) + '</option>'; }).join('');
+    var pOpts = '<option value="auto">조건에 맞게 무작위</option>' + allBank().filter(function (p) { return (s.t === 'all' || p.topic === s.t) && (s.l === 'all' || p.level === s.l); }).map(function (p) { return '<option value="' + esc(p.id) + '"' + (s.p === p.id ? ' selected' : '') + '>' + esc(p.title) + ' (' + p.level + ')</option>'; }).join('');
+    row.innerHTML = '<span class="no">' + (i + 1) + '</span><select aria-label="영역">' + tOpts + '</select><select aria-label="난이도">' + lOpts + '</select><select class="pick" aria-label="문제">' + pOpts + '</select><button class="btn ghost small rm" type="button" aria-label="문항 삭제">삭제</button>';
+    var sels = row.querySelectorAll('select');
+    sels[0].onchange = function () { s.t = this.value; s.p = 'auto'; renderSlots(); };
+    sels[1].onchange = function () { s.l = this.value; s.p = 'auto'; renderSlots(); };
+    sels[2].onchange = function () { s.p = this.value; };
+    row.querySelector('.rm').onclick = function () { slots.splice(i, 1); renderSlots(); };
+    box.appendChild(row);
+  });
+  $('c-add').disabled = slots.length >= 10;
+}
+$('c-add').addEventListener('click', function () { if (slots.length < 10) { slots.push({ t: 'all', l: 'all', p: 'auto' }); renderSlots(); } });
+$('c-go').addEventListener('click', function () {
+  if (!slots.length) return;
+  if (!$('c-seed').value.trim()) $('c-seed').value = newSeed();
+  var seed = $('c-seed').value.trim(), rng = rngFrom(seed), used = {}, items = [], miss = [];
+  slots.forEach(function (s) { if (s.p !== 'auto' && byId(s.p)) used[s.p] = 1; });
+  slots.forEach(function (s, i) {
+    if (s.p !== 'auto' && byId(s.p)) { items.push(byId(s.p)); return; }
+    var c = allBank().filter(function (p) { return !used[p.id] && (s.t === 'all' || p.topic === s.t) && (s.l === 'all' || p.level === s.l); });
+    if (!c.length) { miss.push('문항 ' + (i + 1) + '번 조건(' + (s.t === 'all' ? '영역 전체' : topicLabel(s.t)) + ', ' + (s.l === 'all' ? '난이도 전체' : s.l) + ')에 맞는 문제가 없어 빠졌습니다.'); return; }
+    var p = c[Math.floor(rng() * c.length)]; used[p.id] = 1; items.push(p);
+  });
+  if (!items.length) { $('sheetwrap').hidden = false; $('sheet').innerHTML = '<div class="empty">뽑힌 문제가 없습니다.</div>'; return; }
+  renderSheet(items, '모의고사 (커스텀)', seed, [], miss, 'custom');
+});
+
+/* ---- bank ---- */
+function renderBank() {
+  var tf = $('b-topic').value || 'all', lf = $('b-level').value || 'all', r = recs();
+  var list = allBank().filter(function (p) { return (tf === 'all' || p.topic === tf) && (lf === 'all' || p.level === lf); });
+  $('b-count').textContent = list.length + '문항 / 전체 ' + allBank().length + '문항';
+  $('b-list').innerHTML = list.map(function (p) {
+    var rr = r[p.id] ? ' · 최근 득점률 ' + Math.round(r[p.id].r * 100) + '% (' + r[p.id].n + '회)' : ' · 미풀이';
+    return '<div class="card"><h3>' + esc(p.title) + '<span class="tag">' + esc(p.tag) + '</span><span class="lv" data-l="' + p.level + '">' + p.level + '</span>' + aiBadge(p) + '</h3><div class="note">' + esc(p.src || '') + rr + '</div>' +
+      '<details><summary>문제 미리보기</summary><div class="passage-wrap">' + cleanHTML(p.body) + '</div></details>' +
+      '<div class="acts"><button class="btn small" type="button" data-add="' + esc(p.id) + '">커스텀에 추가</button><button class="btn small ghost" type="button" data-one="' + esc(p.id) + '">이 문제만 시험지로</button></div></div>';
+  }).join('') || '<div class="empty">조건에 맞는 문제가 없습니다.</div>';
+}
+$('b-list').addEventListener('click', function (e) {
+  var a = e.target.closest('[data-add]'), o = e.target.closest('[data-one]');
+  if (a) { if (slots.length < 10) { slots.push({ t: 'all', l: 'all', p: a.dataset.add }); renderSlots(); showTab('custom'); } }
+  if (o) { var p = byId(o.dataset.one); if (p) renderSheet([p], '단일 문제 연습', '-', [], [], 'custom'); }
+});
+function fillBankFilters() {
+  var t = $('b-topic'); t.innerHTML = ''; t.add(new Option('전체', 'all')); topics().forEach(function (k) { t.add(new Option(topicLabel(k), k)); });
+}
+$('b-topic').addEventListener('change', renderBank); $('b-level').addEventListener('change', renderBank);
+function addProblems(arr) {
+  var ub = userBank(), ids = {}, added = 0;
+  allBank().forEach(function (p) { ids[p.id] = 1; });
+  arr.forEach(function (p) {
+    var ok = p && p.id && p.title && p.topic && p.tag && LV[p.level] && p.body && p.sol && Array.isArray(p.rubric) && p.rubric.length;
+    if (!ok) throw new Error('필수 항목이 빠진 문제가 있습니다: ' + (p && p.id || '?'));
+    if (ids[p.id]) throw new Error('이미 있는 id입니다: ' + p.id);
+    p.pts = p.pts || p.rubric.reduce(function (s, i) { return s + i.p; }, 0); p.ah = p.ah || 100; p.src = p.src || '직접 추가';
+    ub.push(p); ids[p.id] = 1; added++;
+  });
+  lsSet('gm.userBank', ub); refreshAll(); return added;
+}
+$('b-import').addEventListener('click', function () {
+  try { var arr = JSON.parse($('b-json').value); if (!Array.isArray(arr)) arr = [arr]; $('b-msg').textContent = addProblems(arr) + '문항을 추가했습니다.'; }
+  catch (e) { $('b-msg').textContent = '가져오기 실패: ' + e.message; }
+});
+$('b-export').addEventListener('click', function () { $('b-json').value = JSON.stringify(userBank(), null, 1); $('b-msg').textContent = '아래 JSON을 복사해 보관하세요.'; });
+$('b-clear').addEventListener('click', function () { lsSet('gm.userBank', []); $('b-msg').textContent = '삭제했습니다.'; refreshAll(); });
+
+/* ---- records ---- */
+function renderRec() {
+  var acc = topicAcc(), r = recs(), ts = topics();
+  $('r-bars').innerHTML = ts.map(function (t) {
+    var a = acc[t]; return '<div class="brow"><span>' + esc(topicLabel(t)) + '</span><div class="bar2"><i style="width:' + (a === undefined ? 0 : Math.round(a * 100)) + '%"></i></div><span>' + (a === undefined ? '미풀이' : Math.round(a * 100) + '%') + '</span></div>';
+  }).join('');
+  var ids = Object.keys(r).sort(function (a, b) { return r[b].t - r[a].t; });
+  $('r-list').innerHTML = ids.length ? '<table class="g" style="width:100%"><tr><th>문제</th><th>최근 득점률</th><th>횟수</th></tr>' + ids.map(function (id) { var p = byId(id); return '<tr><td style="text-align:left">' + esc(p ? p.title : id) + '</td><td>' + Math.round(r[id].r * 100) + '%</td><td>' + r[id].n + '</td></tr>'; }).join('') + '</table>' : '<div class="empty">아직 기록이 없습니다.</div>';
+}
+$('r-reset').addEventListener('click', function () { lsSet('gm.rec', {}); renderRec(); renderBank(); });
+
+/* ---- sheet events ---- */
+$('m-exam').addEventListener('click', function () { setMode('exam'); });
+$('m-sol').addEventListener('click', function () { setMode('sol'); });
+$('p-exam').addEventListener('click', function () { printMode('exam'); });
+$('p-sol').addEventListener('click', function () { printMode('sol'); });
+$('s-min').addEventListener('input', function () { lsSet('gm.min', +this.value); lsSet('gm.minOn', true); updMeta(); });
+$('sheet').addEventListener('change', function (e) { if (e.target.matches('.rubric input')) recalc(); });
+$('sheet').addEventListener('click', function (e) { if (e.target.id === 'sv') saveRec(); });
+
+/* ---- AI generation (sample capability) ---- */
+var samp = null;
+function runJS(code, ms) {
+  return new Promise(function (res) {
+    var src = 'self.onmessage=function(e){var out=[];var log=function(){out.push([].slice.call(arguments).join(" "))};try{var f=new Function("log",e.data);var r=f(log);if(r!==undefined)out.push(String(r));}catch(err){out.push("ERROR "+err.message)}self.postMessage(out.join("\\n").slice(0,3000))}';
+    try {
+      var w = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+      var tm = setTimeout(function () { w.terminate(); res('TIMEOUT: 4초 안에 끝나도록 계산량을 줄이세요.'); }, ms || 4000);
+      w.onmessage = function (e) { clearTimeout(tm); w.terminate(); res(e.data); };
+      w.postMessage(code);
+    } catch (e) { res('ERROR: 코드 실행을 쓸 수 없습니다.'); }
+  });
+}
+function fillAiBase() { var s = $('ai-base'); s.innerHTML = ''; allBank().forEach(function (p) { s.add(new Option(p.title + ' (' + p.level + ')', p.id)); }); }
+if (window.claude && window.claude.use) { window.claude.use('sample').then(function (s) { samp = s; if (s) $('ai-panel').hidden = false; }).catch(function () {}); }
+var aiDraft = [];
+$('ai-go').addEventListener('click', function () {
+  var base = byId($('ai-base').value); if (!base || !samp) return;
+  var kind = $('ai-kind').value, lv = $('ai-lv').value, msg = $('ai-msg'), out = $('ai-out');
+  var ex = { id: base.id, title: base.title, topic: base.topic, tag: base.tag, level: base.level, body: base.body, sol: base.sol, rubric: base.rubric };
+  var prompt = '당신은 부산대학교 과학영재교육원 중등수학심화 1차 전형(창의적문제해결력검사)을 준비하는 학생용 문제를 만드는 출제자입니다.\n' +
+    '아래 예시 문제(JSON)와 같은 형식·문체로 새 문제 1개를 만드세요. 방식: ' + (kind === 'vary' ? '예시와 같은 구조에서 숫자·조건·상황만 바꾼 변형. 풀이 아이디어는 같되 답과 중간값은 달라야 함.' : '예시와 같은 영역(' + base.tag + ')의 새 상황·새 지문.') + ' 목표 난이도: ' + lv + '.\n' +
+    '규칙: (1) 지문을 읽고 (1)→(2)→(3)→(4)로 이어지는 연쇄형이며 앞 결과가 뒤의 힌트가 되게. 소문항 배점은 [4점]처럼 표기, 합계 20점. (2) 중등 1학년 수준 지식으로 풀 수 있게. (3) 모든 정답·중간값은 반드시 verify_js 도구로 직접 계산(전수조사·시뮬레이션)해 확인하고, 틀리면 고쳐서 다시 확인. 확인하지 못한 값은 쓰지 말 것. (4) sol은 예시처럼 문해력 포인트, 단계별 풀이(ol), 정답 줄(p.ans-line), 자주 하는 실수(div.pitfall)를 갖춘 자세한 HTML. (5) rubric은 [{t,p}]이고 p의 합이 20. (6) body는 예시처럼 div.passage와 div.q(span.n, span.p)로 구성.\n' +
+    '출력은 JSON 객체 하나만. 키: id("ai-"로 시작), title, topic("' + base.topic + '"), tag, level("' + lv + '"), body, sol, rubric, verified(코드로 모든 답을 확인했으면 true), verifyNote(무엇을 어떻게 확인했는지 한 줄).\n\n예시:\n' + JSON.stringify(ex);
+  var btn = $('ai-go'); btn.disabled = true; msg.textContent = 'Claude가 문제를 만들고 답을 계산해 확인하는 중입니다. 1~2분 걸릴 수 있습니다.'; out.innerHTML = '';
+  var tool = { name: 'verify_js', description: 'JavaScript 코드를 실행해 log()로 출력한 결과를 돌려줍니다. 전수조사·시뮬레이션으로 정답을 확인할 때 쓰세요. 4초 안에 끝나야 합니다.', inputSchema: { type: 'object', properties: { code: { type: 'string', description: '실행할 JS 함수 본문. log(값)으로 출력.' } }, required: ['code'] }, execute: function (inp) { return runJS(inp.code, 4000); } };
+  samp(prompt, { tools: [tool], modelTier: 'complex', cache: false }).then(function (r) {
+    var txt = r.text || '', i = txt.indexOf('{'), j = txt.lastIndexOf('}');
+    var obj = JSON.parse(txt.slice(i, j + 1));
+    obj.id = 'ai-' + newSeed(); obj.ai = true; obj.verified = !!obj.verified; obj.src = 'AI 생성(' + base.title + ' 기반)'; obj.ah = 100;
+    obj.rubric = (obj.rubric || []).map(function (x) { return { t: String(x.t), p: Number(x.p) }; });
+    var sum = obj.rubric.reduce(function (s, x) { return s + x.p; }, 0);
+    if (sum !== 20) throw new Error('채점 기준 합이 20점이 아닙니다(' + sum + ').');
+    aiDraft = [obj]; msg.textContent = '';
+    out.innerHTML = '<div class="card"><h3>' + esc(obj.title) + '<span class="tag">' + esc(obj.tag) + '</span><span class="lv" data-l="' + esc(obj.level) + '">' + esc(obj.level) + '</span>' + aiBadge(obj) + '</h3><div class="note">' + esc(obj.verifyNote || '') + '</div><details open><summary>문제·해설 확인</summary><div>' + cleanHTML(obj.body) + '</div><div class="sol">' + cleanHTML(obj.sol) + '</div></details><div class="acts"><button class="btn small" id="ai-add" type="button">은행에 추가</button></div></div>';
+  }).catch(function (e) { msg.textContent = '만들지 못했습니다: ' + (e && e.message || e && e.code || '알 수 없는 오류'); }).then(function () { btn.disabled = false; });
+});
+$('ai-out').addEventListener('click', function (e) { if (e.target.id === 'ai-add' && aiDraft.length) { try { addProblems(aiDraft); $('ai-msg').textContent = '은행에 추가했습니다. 자동 설계·커스텀에서 쓸 수 있습니다.'; $('ai-out').innerHTML = ''; aiDraft = []; } catch (er) { $('ai-msg').textContent = er.message; } } });
+
+function refreshAll() { fillAutoUI(); fillBankFilters(); renderSlots(); renderBank(); renderRec(); fillAiBase(); $('stat').textContent = '문제 은행 ' + allBank().length + '문항'; }
+refreshAll();
+document.body.dataset.mode = 'exam';
+</script>

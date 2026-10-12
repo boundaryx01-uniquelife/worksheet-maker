@@ -1,0 +1,79 @@
+<title>모의고사 메이커 허브 시안</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: 상단 시안 선택 바 + 아래에 선택한 시안의 허브 화면. 밝은 단일 테마(의도적) */
+:root{color-scheme:light;--ink:#14233f;--muted:#5b6b88;--blue:#2563eb;--mint:#12b886;--sun:#ffc83d;--pink:#ff7aa8;--font:'Noto Sans KR',system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--ink);font-family:var(--font);padding-inline:16px}
+.pick{max-width:900px;margin:0 auto;padding-block:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid #e3ecfa}
+.pick span{font-size:12px;color:var(--muted);margin-right:4px}
+.pick button{font:700 13px var(--font);border:1px solid #cfdcf3;background:#fff;color:var(--muted);padding:7px 14px;border-radius:99px;cursor:pointer}
+.pick button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.pick button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.stage{margin-inline:-16px;padding:36px 16px 56px;min-height:70vh}
+.in{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.mark{align-self:flex-start;font-size:12px;font-weight:800;letter-spacing:.12em;background:var(--sun);color:#4a3500;padding:4px 12px;border-radius:99px}
+h1{margin:0;font-size:30px;font-weight:800;text-wrap:balance}
+.sub{margin:0;color:var(--muted);font-size:14px}
+a.t,.t{text-decoration:none;color:inherit;min-width:0}
+.list{display:grid;gap:16px}
+.name{font-weight:800}.meta{font-size:12px;color:var(--muted)}
+.soon{opacity:.55}
+
+/* A. 하늘색 카드 */
+[data-v="A"]{background:linear-gradient(180deg,#e6f1ff,#f5faff)}
+[data-v="A"] .list{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+[data-v="A"] .t{display:flex;flex-direction:column;background:#fff;border:1px solid #d6e2f5;border-radius:18px;overflow:hidden;box-shadow:0 6px 18px rgba(37,99,235,.08);transition:transform .15s}
+[data-v="A"] a.t:hover{transform:translateY(-3px)}
+[data-v="A"] .th{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;font-size:42px;font-weight:800;color:#fff;background:linear-gradient(135deg,#4f8cff,#3ddcae)}
+[data-v="A"] .tx{padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+[data-v="A"] .soon .th{background:#eaf1fb;color:#b9c9e3}
+
+/* B. 앱 아이콘 런처 */
+[data-v="B"]{background:#fff}
+[data-v="B"] .list{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:26px 18px}
+[data-v="B"] .t{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+[data-v="B"] .th{width:100%;max-width:120px;aspect-ratio:1;border-radius:28%;display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#fff;background:linear-gradient(145deg,#ffb53d,#ff7aa8);box-shadow:0 10px 22px rgba(255,122,168,.35);transition:transform .15s}
+[data-v="B"] a.t:hover .th{transform:scale(1.06)}
+[data-v="B"] .soon .th{background:#f1f5fb;color:#c4d1e6;box-shadow:none;border:2px dashed #d6e2f5}
+[data-v="B"] .tx{display:flex;flex-direction:column;gap:2px}
+
+/* C. 가로 배너 */
+[data-v="C"]{background:#f3fbf8}
+[data-v="C"] .list{grid-template-columns:1fr}
+[data-v="C"] .t{display:flex;align-items:center;gap:18px;background:var(--mint);color:#fff;border-radius:20px;padding:22px 26px;transition:transform .15s}
+[data-v="C"] a.t:hover{transform:translateX(4px)}
+[data-v="C"] .th{font-size:40px;font-weight:800;opacity:.95;white-space:nowrap}
+[data-v="C"] .tx{display:flex;flex-direction:column;gap:2px;flex:1}
+[data-v="C"] .tx .name{font-size:20px}
+[data-v="C"] .tx .meta{color:#e6fff6}
+[data-v="C"] .t::after{content:"→";font-size:26px;font-weight:800}
+[data-v="C"] .soon{background:none;border:2px dashed #b8e6d6;color:#6aa893;opacity:1}
+[data-v="C"] .soon .tx .meta{color:#6aa893}[data-v="C"] .soon::after{content:""}
+@media (prefers-reduced-motion:reduce){.t,.th{transition:none!important}}
+</style>
+<div class="pick" role="group" aria-label="시안 선택">
+  <span>시안</span>
+  <button type="button" data-v="A" aria-pressed="true">A 하늘색 카드</button>
+  <button type="button" data-v="B" aria-pressed="false">B 앱 아이콘</button>
+  <button type="button" data-v="C" aria-pressed="false">C 가로 배너</button>
+</div>
+<div class="stage" id="stage" data-v="A">
+  <div class="in">
+    <span class="mark">HUB</span>
+    <h1>모의고사 메이커 허브</h1>
+    <p class="sub">목표를 고르면 해당 페이지로 이동합니다.</p>
+    <div class="list">
+      <a class="t" href="https://claude.ai/artifact/VspkBiY5BKfMyXQm7tNyJV" target="_blank" rel="noopener"><div class="th">영재원</div><div class="tx"><span class="name">부산대 과학영재원 대비</span><span class="meta">중등수학심화 · 1차 10/31</span></div></a>
+      <div class="t soon"><div class="th">+</div><div class="tx"><span class="name">다음 목표</span><span class="meta">준비 중</span></div></div>
+    </div>
+  </div>
+</div>
+<script>
+var st=document.getElementById('stage');
+document.querySelector('.pick').addEventListener('click',function(e){
+  var b=e.target.closest('[data-v]');if(!b)return;
+  st.dataset.v=b.dataset.v;
+  document.querySelectorAll('.pick button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+});
+</script>
